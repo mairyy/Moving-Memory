@@ -5,6 +5,7 @@
 #include <iostream>
 #include <string>
 #include <cmath>
+#include <ctime>
 
 using namespace std;
 
@@ -19,6 +20,50 @@ SDL_Texture* gTexture = NULL;
 TTF_Font* gFont = NULL;
 SDL_Renderer* gRenderer = NULL;
 
+class Point{
+    int x, y;
+public:
+    Point(){};
+    Point(int x_, int y_): x(x_), y (y_){}
+    int getX(){return x;}
+    int getY(){return y;}
+    void setX(int x){this->x = x;}
+    void setY(int y){this->y = y;}
+    void print(){
+        cout << "(" << x << "," << y << ")\n";
+    }
+};
+
+class Picture{
+    string path;
+    Point pos1, pos2;
+    int frequency, count;
+public:
+    Picture(){
+        path = "";
+        pos1 = {0, 0};
+        pos2 = {0, 0};
+        frequency = 0;
+        count = 0;
+    }
+    string getPath(){return path;}
+    void setPath(string path){this->path = path;}
+    Point getPos1(){return pos1;}
+    Point getPos2(){return pos2;}
+    void setPos1(int x, int y){
+        pos1.setX(x);
+        pos1.setY(y);
+    }
+    void setPos2(int x, int y){
+        pos2.setX(x);
+        pos2.setY(y);
+    }
+    int getFre(){return frequency;}
+    void setFre(int frequency){this->frequency = frequency;}
+    int getCount(){return count;}
+    void setCount(int count){this->count = count;}
+};
+
 bool init();
 SDL_Surface* loadImageFromFile(string path);
 SDL_Surface* deleteBackGroundImage(SDL_Surface* image, Uint8 red, Uint8 green, Uint8 blue);
@@ -29,30 +74,174 @@ void applyText(string text, int x, int y);
 void clean();
 
 int main(int argc, char* args[]){
+    int x, y;
     bool quit = false;
     if(!init()){
         cout << "Failed to initialize!\n";
     }else{
-        SDL_Surface* startBackGroundImage = loadImageFromFile("Pictures/startGameBackGround.png");
-        SDL_Texture* startBackGroundTexture = SDL_CreateTextureFromSurface(gRenderer, startBackGroundImage);
-        applyImage(startBackGroundTexture, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
-
-        SDL_Surface* startButtonImage = loadImageFromFile("Pictures/start.png");
-        startButtonImage = deleteBackGroundImage(startButtonImage, 0, 0, 0);
-        SDL_Texture* startButtonTexture = SDL_CreateTextureFromSurface(gRenderer, startButtonImage);
-        applyImage(startButtonTexture, 470, 370, 150, 54);
-
-        SDL_Surface* helpButtonImage = loadImageFromFile("Pictures/help.png");
-        helpButtonImage = deleteBackGroundImage(helpButtonImage, 0, 0, 0);
-        SDL_Texture* helpButtonTexture = SDL_CreateTextureFromSurface(gRenderer, helpButtonImage);
-        applyImage(helpButtonTexture, 470, 470, 150, 54);
+        SDL_Surface* backGround = loadImageFromFile("Pictures/gameBackGround.png");
+        SDL_Texture* backGroundTexture = SDL_CreateTextureFromSurface(gRenderer, backGround);
+        applyImage(backGroundTexture, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+        const int totalPos = 6;
+        Point posArr[totalPos] = {{110, 115}, {360, 115}, {610, 115}, {110, 365}, {360, 365}, {610, 365}};
+        SDL_Surface* pic0 = loadImageFromFile("Pictures/0.png");
+        SDL_Texture* pic0Texture = SDL_CreateTextureFromSurface(gRenderer, pic0);
+        for(int i = 0; i < totalPos; i++){
+            applyImage(pic0Texture, posArr[i].getX(), posArr[i].getY(), 190, 190);
+        }
+        // SDL_Delay(300);
+        SDL_RenderPresent(gRenderer);
+        srand(time(0));
+        const int totalPics = 3;
+        Picture pics[totalPics];
+        string picsPath[totalPics] = {"Pictures/1.png", "Pictures/2.png", "Pictures/3.png"};
+        for(int i = 0; i < totalPics; i++){
+            pics[i].setPath(picsPath[i]);
+        }
+        for(int i = 0; i < totalPos; i++){
+            int k = rand() % + totalPics;
+            if(pics[k].getFre() == 0){
+                pics[k].setFre(1);
+                pics[k].setPos1(posArr[i].getX(), posArr[i].getY());
+            }else if(pics[k].getFre() == 1){
+                pics[k].setFre(2);
+                pics[k].setPos2(posArr[i].getX(), posArr[i].getY());
+            }else{
+                i--;
+            }
+        }
+        SDL_Surface* pic1 = loadImageFromFile(pics[0].getPath());
+        SDL_Texture* pic1Texture = SDL_CreateTextureFromSurface(gRenderer, pic1);
+        SDL_Surface* pic2 = loadImageFromFile(pics[1].getPath());
+        SDL_Texture* pic2Texture = SDL_CreateTextureFromSurface(gRenderer, pic2);
+        SDL_Surface* pic3 = loadImageFromFile(pics[2].getPath());
+        SDL_Texture* pic3Texture = SDL_CreateTextureFromSurface(gRenderer, pic3);
+        string prevPath = "";
+        Point prevPos;
+        int count = 0;
         while(!quit){
+            SDL_GetMouseState(&x, &y);
             while(SDL_PollEvent(&gEvent) != 0){
                 if(gEvent.type == SDL_QUIT){
                     quit = true;
                 }
+                if(gEvent.type == SDL_MOUSEBUTTONDOWN){
+                    if(x > pics[0].getPos1().getX() && x < pics[0].getPos1().getX() + 190 && y > pics[0].getPos1().getY() && y < pics[0].getPos1().getY() + 190){
+                        applyImage(pic1Texture, pics[0].getPos1().getX(), pics[0].getPos1().getY(), 190, 190);
+                        SDL_RenderPresent(gRenderer);
+                        if(count == 0){
+                            count = 1;
+                            prevPath = pics[0].getPath();
+                            prevPos = pics[0].getPos1();
+                        }else{
+                            if(prevPath != pics[0].getPath()){
+                                applyImage(pic0Texture, pics[0].getPos1().getX(), pics[0].getPos1().getY(), 190, 190);
+                                applyImage(pic0Texture, prevPos.getX(), prevPos.getY(), 190, 190);
+                                SDL_Delay(500);
+                                SDL_RenderPresent(gRenderer);
+                            }
+                            prevPath = "";
+                            prevPos = {0,0};
+                            count = 0;
+                        }
+                    }
+                    if(x > pics[0].getPos2().getX() && x < pics[0].getPos2().getX() + 190 && y > pics[0].getPos2().getY() && y < pics[0].getPos2().getY() + 190){
+                        applyImage(pic1Texture, pics[0].getPos2().getX(), pics[0].getPos2().getY(), 190, 190);
+                        SDL_RenderPresent(gRenderer);
+                        if(count == 0){
+                            count = 1;
+                            prevPath = pics[0].getPath();
+                            prevPos = pics[0].getPos2();
+                        }else{
+                            if(prevPath != pics[0].getPath()){
+                                applyImage(pic0Texture, pics[0].getPos2().getX(), pics[0].getPos2().getY(), 190, 190);
+                                applyImage(pic0Texture, prevPos.getX(), prevPos.getY(), 190, 190);
+                                SDL_Delay(500);
+                                SDL_RenderPresent(gRenderer);
+                            }
+                            prevPath = "";
+                            prevPos = {0,0};
+                            count = 0;
+                        }
+                    }
+                    if(x > pics[1].getPos1().getX() && x < pics[1].getPos1().getX() + 190 && y > pics[1].getPos1().getY() && y < pics[1].getPos1().getY() + 190){
+                        applyImage(pic2Texture, pics[1].getPos1().getX(), pics[1].getPos1().getY(), 190, 190);
+                        SDL_RenderPresent(gRenderer);
+                        if(count == 0){
+                            count = 1;
+                            prevPath = pics[1].getPath();
+                            prevPos = pics[1].getPos1();
+                        }else{
+                            if(prevPath != pics[1].getPath()){
+                                applyImage(pic0Texture, pics[1].getPos1().getX(), pics[1].getPos1().getY(), 190, 190);
+                                applyImage(pic0Texture, prevPos.getX(), prevPos.getY(), 190, 190);
+                                SDL_Delay(500);
+                                SDL_RenderPresent(gRenderer);
+                            }
+                            prevPath = "";
+                            prevPos = {0,0};
+                            count = 0;
+                        }
+                    }
+                    if(x >  pics[1].getPos2().getX() && x < pics[1].getPos2().getX() + 190 && y > pics[1].getPos2().getY() && y < pics[1].getPos2().getY() + 190){
+                        applyImage(pic2Texture, pics[1].getPos2().getX(), pics[1].getPos2().getY(), 190, 190);
+                        SDL_RenderPresent(gRenderer);
+                        if(count == 0){
+                            count = 1;
+                            prevPath = pics[1].getPath();
+                            prevPos = pics[1].getPos2();
+                        }else{
+                            if(prevPath != pics[1].getPath()){
+                                applyImage(pic0Texture, pics[1].getPos2().getX(), pics[1].getPos2().getY(), 190, 190);
+                                applyImage(pic0Texture, prevPos.getX(), prevPos.getY(), 190, 190);
+                                SDL_Delay(500);
+                                SDL_RenderPresent(gRenderer);
+                            }
+                            prevPath = "";
+                            prevPos = {0,0};
+                            count = 0;
+                        }
+                    }
+                    if(x > pics[2].getPos1().getX() && x < pics[2].getPos1().getX() + 190 && y > pics[2].getPos1().getY() && y < pics[2].getPos1().getY() + 190){
+                        applyImage(pic3Texture, pics[2].getPos1().getX(), pics[2].getPos1().getY(), 190, 190);
+                            SDL_RenderPresent(gRenderer);
+                        if(count == 0){
+                            count = 1;
+                            prevPath = pics[2].getPath();
+                            prevPos = pics[2].getPos1();
+                        }else{
+                            if(prevPath != pics[2].getPath()){
+                                applyImage(pic0Texture, pics[2].getPos1().getX(), pics[2].getPos1().getY(), 190, 190);
+                                applyImage(pic0Texture, prevPos.getX(), prevPos.getY(), 190, 190);
+                                SDL_Delay(500);
+                                SDL_RenderPresent(gRenderer);
+                            }
+                            prevPath = "";
+                            prevPos = {0,0};
+                            count = 0;
+                        }
+                    }
+                    if(x > pics[2].getPos2().getX() && x < pics[2].getPos2().getX() + 190 && y > pics[2].getPos2().getY() && y < pics[2].getPos2().getY() + 190){
+                        applyImage(pic3Texture, pics[2].getPos2().getX(), pics[2].getPos2().getY(), 190, 190);
+                        SDL_RenderPresent(gRenderer);
+                        if(count == 0){
+                            count = 1;
+                            prevPath = pics[2].getPath();
+                            prevPos = pics[2].getPos2();
+                        }else{
+                            if(prevPath != pics[2].getPath()){
+                                applyImage(pic0Texture, pics[2].getPos2().getX(), pics[2].getPos2().getY(), 190, 190);
+                                applyImage(pic0Texture, prevPos.getX(), prevPos.getY(), 190, 190);
+                                SDL_Delay(500);
+                                SDL_RenderPresent(gRenderer);
+                            }
+                            prevPath = "";
+                            prevPos = {0,0};
+                            count = 0;
+                        }
+                    }
+                }
             }
-            SDL_RenderPresent(gRenderer);
         }
     }
     clean();
