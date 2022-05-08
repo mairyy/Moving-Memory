@@ -193,7 +193,7 @@ int main(int argc, char* args[]){
                             }
                         }
                     }
-                    if(!pics[0].getFind() && x > pics[2].getPos2().getX() && x < pics[2].getPos2().getX() + 190 && y > pics[2].getPos2().getY() && y < pics[2].getPos2().getY() + 190){
+                    if(!pics[2].getFind() && x > pics[2].getPos2().getX() && x < pics[2].getPos2().getX() + 190 && y > pics[2].getPos2().getY() && y < pics[2].getPos2().getY() + 190){
                         applyImage(pic3Texture, gRenderer, pics[2].getPos2().getX(), pics[2].getPos2().getY(), 190, 190);
                         SDL_RenderPresent(gRenderer);
                         if(prevPos.getX() != pics[2].getPos2().getX() || prevPos.getY() != pics[2].getPos2().getY()){    
@@ -222,6 +222,7 @@ int main(int argc, char* args[]){
                     deleteBackGroundImage(winPic, 0, 0, 0);
                     SDL_Texture* winTexture = SDL_CreateTextureFromSurface(gRenderer, winPic);
                     applyImage(winTexture, gRenderer, 300, 130, 500, 400);
+                    SDL_Delay(300);
                     SDL_RenderPresent(gRenderer);
                 }
             }
