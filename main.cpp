@@ -2,6 +2,7 @@
 #include <SDL.h>
 #include <SDL_image.h>
 #include <SDL_ttf.h>
+#include <SDL_mixer.h>
 #include <iostream>
 #include <string>
 #include <cmath>
@@ -21,6 +22,10 @@ SDL_Event gEvent;
 SDL_Texture* gTexture = NULL;
 TTF_Font* gFont = NULL;
 SDL_Renderer* gRenderer = NULL;
+Mix_Chunk* gClick = NULL;
+Mix_Chunk* gWrong = NULL;
+Mix_Chunk* gRight = NULL;
+Mix_Chunk* gWin = NULL;
 
 bool init();
 void clean();
@@ -31,6 +36,10 @@ int main(int argc, char* args[]){
     if(!init()){
         cout << "Failed to initialize!\n";
     }else{
+        gClick = Mix_LoadWAV("Sound-effects/soundClick.wav");
+        gWrong = Mix_LoadWAV("Sound-effects/soundWrong.wav");
+        gRight = Mix_LoadWAV("Sound-effects/soundRight.wav");
+        gWin = Mix_LoadWAV("Sound-effects/soundWin.wav");
         SDL_Surface* backGround = loadImageFromFile("Pictures/gameBackGround.png", gScreen);
         SDL_Texture* backGroundTexture = SDL_CreateTextureFromSurface(gRenderer, backGround);
         applyImage(backGroundTexture, gRenderer, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
@@ -79,6 +88,7 @@ int main(int argc, char* args[]){
                 }
                 if(gEvent.type == SDL_MOUSEBUTTONDOWN){
                     if(!pics[0].getFind() && x > pics[0].getPos1().getX() && x < pics[0].getPos1().getX() + 190 && y > pics[0].getPos1().getY() && y < pics[0].getPos1().getY() + 190){
+                        Mix_PlayChannel(-1, gClick, 0);
                         applyImage(pic1Texture, gRenderer, pics[0].getPos1().getX(), pics[0].getPos1().getY(), 190, 190);
                         SDL_RenderPresent(gRenderer);
                         if(prevPos.getX() != pics[0].getPos1().getX() || prevPos.getY() != pics[0].getPos1().getY()){
@@ -88,11 +98,13 @@ int main(int argc, char* args[]){
                                 prevPos = pics[0].getPos1();
                             }else{
                                 if(prevPath != pics[0].getPath()){
+                                    Mix_PlayChannel(-1, gWrong, 0);
                                     applyImage(pic0Texture, gRenderer, pics[0].getPos1().getX(), pics[0].getPos1().getY(), 190, 190);
                                     applyImage(pic0Texture, gRenderer, prevPos.getX(), prevPos.getY(), 190, 190);
                                     SDL_Delay(500);
                                     SDL_RenderPresent(gRenderer);
                                 }else{
+                                    Mix_PlayChannel(-1, gRight, 0);
                                     pics[0].setFind(true);
                                 }
                                 prevPath = "";
@@ -102,6 +114,7 @@ int main(int argc, char* args[]){
                         }
                     }
                     if(!pics[0].getFind() && x > pics[0].getPos2().getX() && x < pics[0].getPos2().getX() + 190 && y > pics[0].getPos2().getY() && y < pics[0].getPos2().getY() + 190){
+                        Mix_PlayChannel(-1, gClick, 0);
                         applyImage(pic1Texture, gRenderer, pics[0].getPos2().getX(), pics[0].getPos2().getY(), 190, 190);
                         SDL_RenderPresent(gRenderer);
                         if(prevPos.getX() != pics[0].getPos2().getX() || prevPos.getY() != pics[0].getPos2().getY()){    
@@ -111,11 +124,13 @@ int main(int argc, char* args[]){
                                 prevPos = pics[0].getPos2();
                             }else{
                                 if(prevPath != pics[0].getPath()){
+                                    Mix_PlayChannel(-1, gWrong, 0);
                                     applyImage(pic0Texture, gRenderer, pics[0].getPos2().getX(), pics[0].getPos2().getY(), 190, 190);
                                     applyImage(pic0Texture, gRenderer, prevPos.getX(), prevPos.getY(), 190, 190);
                                     SDL_Delay(500);
                                     SDL_RenderPresent(gRenderer);
                                 }else{
+                                    Mix_PlayChannel(-1, gRight, 0);
                                     pics[0].setFind(true);
                                 }
                                 prevPath = "";
@@ -125,6 +140,7 @@ int main(int argc, char* args[]){
                         }
                     }
                     if(!pics[1].getFind() && x > pics[1].getPos1().getX() && x < pics[1].getPos1().getX() + 190 && y > pics[1].getPos1().getY() && y < pics[1].getPos1().getY() + 190){
+                        Mix_PlayChannel(-1, gClick, 0);
                         applyImage(pic2Texture, gRenderer, pics[1].getPos1().getX(), pics[1].getPos1().getY(), 190, 190);
                         SDL_RenderPresent(gRenderer);
                         if(prevPos.getX() != pics[1].getPos1().getX() || prevPos.getY() != pics[1].getPos1().getY()){    
@@ -134,11 +150,13 @@ int main(int argc, char* args[]){
                                 prevPos = pics[1].getPos1();
                             }else{
                                 if(prevPath != pics[1].getPath()){
+                                    Mix_PlayChannel(-1, gWrong, 0);
                                     applyImage(pic0Texture, gRenderer, pics[1].getPos1().getX(), pics[1].getPos1().getY(), 190, 190);
                                     applyImage(pic0Texture, gRenderer, prevPos.getX(), prevPos.getY(), 190, 190);
                                     SDL_Delay(500);
                                     SDL_RenderPresent(gRenderer);
                                 }else{
+                                    Mix_PlayChannel(-1, gRight, 0);
                                     pics[1].setFind(true);
                                 }
                                 prevPath = "";
@@ -148,6 +166,7 @@ int main(int argc, char* args[]){
                         }
                     }
                     if(!pics[1].getFind() && x >  pics[1].getPos2().getX() && x < pics[1].getPos2().getX() + 190 && y > pics[1].getPos2().getY() && y < pics[1].getPos2().getY() + 190){
+                        Mix_PlayChannel(-1, gClick, 0);
                         applyImage(pic2Texture, gRenderer, pics[1].getPos2().getX(), pics[1].getPos2().getY(), 190, 190);
                         SDL_RenderPresent(gRenderer);
                         if(prevPos.getX() != pics[1].getPos2().getX() || prevPos.getY() != pics[1].getPos2().getY()){    
@@ -157,11 +176,13 @@ int main(int argc, char* args[]){
                                 prevPos = pics[1].getPos2();
                             }else{
                                 if(prevPath != pics[1].getPath()){
+                                    Mix_PlayChannel(-1, gWrong, 0);
                                     applyImage(pic0Texture, gRenderer, pics[1].getPos2().getX(), pics[1].getPos2().getY(), 190, 190);
                                     applyImage(pic0Texture, gRenderer, prevPos.getX(), prevPos.getY(), 190, 190);
                                     SDL_Delay(500);
                                     SDL_RenderPresent(gRenderer);
                                 }else{
+                                    Mix_PlayChannel(-1, gRight, 0);
                                     pics[1].setFind(true);
                                 }
                                 prevPath = "";
@@ -171,6 +192,7 @@ int main(int argc, char* args[]){
                         }
                     }
                     if(!pics[2].getFind() && x > pics[2].getPos1().getX() && x < pics[2].getPos1().getX() + 190 && y > pics[2].getPos1().getY() && y < pics[2].getPos1().getY() + 190){
+                        Mix_PlayChannel(-1, gClick, 0);
                         applyImage(pic3Texture, gRenderer, pics[2].getPos1().getX(), pics[2].getPos1().getY(), 190, 190);
                         SDL_RenderPresent(gRenderer);
                         if(prevPos.getX() != pics[2].getPos1().getX() || prevPos.getY() != pics[2].getPos1().getY()){    
@@ -180,11 +202,13 @@ int main(int argc, char* args[]){
                                 prevPos = pics[2].getPos1();
                             }else{
                                 if(prevPath != pics[2].getPath()){
+                                    Mix_PlayChannel(-1, gWrong, 0);
                                     applyImage(pic0Texture, gRenderer, pics[2].getPos1().getX(), pics[2].getPos1().getY(), 190, 190);
                                     applyImage(pic0Texture, gRenderer, prevPos.getX(), prevPos.getY(), 190, 190);
                                     SDL_Delay(500);
                                     SDL_RenderPresent(gRenderer);
                                 }else{
+                                    Mix_PlayChannel(-1, gRight, 0);
                                     pics[2].setFind(true);
                                 }
                                 prevPath = "";
@@ -194,6 +218,7 @@ int main(int argc, char* args[]){
                         }
                     }
                     if(!pics[2].getFind() && x > pics[2].getPos2().getX() && x < pics[2].getPos2().getX() + 190 && y > pics[2].getPos2().getY() && y < pics[2].getPos2().getY() + 190){
+                        Mix_PlayChannel(-1, gClick, 0);
                         applyImage(pic3Texture, gRenderer, pics[2].getPos2().getX(), pics[2].getPos2().getY(), 190, 190);
                         SDL_RenderPresent(gRenderer);
                         if(prevPos.getX() != pics[2].getPos2().getX() || prevPos.getY() != pics[2].getPos2().getY()){    
@@ -203,11 +228,13 @@ int main(int argc, char* args[]){
                                 prevPos = pics[2].getPos2();
                             }else{
                                 if(prevPath != pics[2].getPath()){
+                                    Mix_PlayChannel(-1, gWrong, 0);
                                     applyImage(pic0Texture, gRenderer, pics[2].getPos2().getX(), pics[2].getPos2().getY(), 190, 190);
                                     applyImage(pic0Texture, gRenderer, prevPos.getX(), prevPos.getY(), 190, 190);
                                     SDL_Delay(500);
                                     SDL_RenderPresent(gRenderer);
                                 }else{
+                                    Mix_PlayChannel(-1, gRight, 0);
                                     pics[2].setFind(true);
                                 }
                                 prevPath = "";
@@ -222,21 +249,26 @@ int main(int argc, char* args[]){
                     deleteBackGroundImage(winPic, 0, 0, 0);
                     SDL_Texture* winTexture = SDL_CreateTextureFromSurface(gRenderer, winPic);
                     applyImage(winTexture, gRenderer, 300, 130, 500, 400);
-                    SDL_Delay(300);
+                    SDL_Delay(400);
                     SDL_RenderPresent(gRenderer);
+                    Mix_PlayChannel(-1, gWin, 0);
+                    pics[0].setFind(false);
+                    pics[1].setFind(false);
+                    pics[2].setFind(false);
                 }
             }
         }
     }
     clean();
     IMG_Quit();
+    Mix_Quit();
     SDL_Quit();
     return 0;
 }
 
 bool init(){
     bool success = true;
-    if(SDL_Init(SDL_INIT_VIDEO) < 0){
+    if(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0){
         cout << "SDL could not initialize! SDL Error: " << SDL_GetError() << endl;
         success = false;
     }else{
@@ -253,6 +285,9 @@ bool init(){
                 if(!(IMG_Init(imgFlags) & imgFlags)){
                     cout << "SDL_image could not initialize! SDL_image Error: " << IMG_GetError() << endl;
                     success = false;
+                }else if(Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0){
+                    cout << "SDL_mixer could not initialize! SDL_mixer Error: " << Mix_GetError() << endl;
+                    success = false;
                 }else{
                     gScreen = SDL_GetWindowSurface(gWindow);
                 }
@@ -267,4 +302,8 @@ void clean(){
     SDL_DestroyWindow(gWindow);
     SDL_DestroyTexture(gTexture);
     SDL_RenderClear(gRenderer);
+    Mix_FreeChunk(gClick);
+    Mix_FreeChunk(gWrong);
+    Mix_FreeChunk(gRight);
+    Mix_FreeChunk(gWin);
 }
