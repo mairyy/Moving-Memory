@@ -9,6 +9,8 @@
 #include <ctime>
 #include "common.h"
 #include "pictures.h"
+#include "level1.h"
+#include "menu.h"
 
 using namespace std;
 
@@ -19,20 +21,21 @@ using namespace std;
 SDL_Surface* gScreen = NULL;
 SDL_Window* gWindow = NULL;
 SDL_Event gEvent;
-SDL_Texture* gTexture = NULL;
 TTF_Font* gFont = NULL;
 SDL_Renderer* gRenderer = NULL;
 Mix_Chunk* gClick = NULL;
 Mix_Chunk* gWrong = NULL;
 Mix_Chunk* gRight = NULL;
 Mix_Chunk* gWin = NULL;
+SDL_Texture* pic0Texture = NULL, *pic1Texture = NULL, *pic2Texture = NULL, *pic3Texture = NULL;
 
 bool init();
+void loadLevel1Picture(Picture* pics);
 void clean();
 
 int main(int argc, char* args[]){
     int x, y;
-    bool quit = false;
+    bool isQuit = false, isWin = false, isStart = false, isHelp = false;
     if(!init()){
         cout << "Failed to initialize!\n";
     }else{
@@ -40,222 +43,50 @@ int main(int argc, char* args[]){
         gWrong = Mix_LoadWAV("Sound-effects/soundWrong.wav");
         gRight = Mix_LoadWAV("Sound-effects/soundRight.wav");
         gWin = Mix_LoadWAV("Sound-effects/soundWin.wav");
-        SDL_Surface* backGround = loadImageFromFile("Pictures/gameBackGround.png", gScreen);
-        SDL_Texture* backGroundTexture = SDL_CreateTextureFromSurface(gRenderer, backGround);
-        applyImage(backGroundTexture, gRenderer, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
-        const int totalPos = 6;
-        Point posArr[totalPos] = {{110, 115}, {360, 115}, {610, 115}, {110, 365}, {360, 365}, {610, 365}};
         SDL_Surface* pic0 = loadImageFromFile("Pictures/0.png",gScreen);
-        SDL_Texture* pic0Texture = SDL_CreateTextureFromSurface(gRenderer, pic0);
-        for(int i = 0; i < totalPos; i++){
-            applyImage(pic0Texture, gRenderer, posArr[i].getX(), posArr[i].getY(), 190, 190);
-        }
-        // SDL_Delay(300);
-        SDL_RenderPresent(gRenderer);
-        srand(time(0));
-        const int totalPics = 3;
-        Picture pics[totalPics];
-        string picsPath[totalPics] = {"Pictures/1.png", "Pictures/2.png", "Pictures/3.png"};
-        for(int i = 0; i < totalPics; i++){
-            pics[i].setPath(picsPath[i]);
-        }
-        for(int i = 0; i < totalPos; i++){
-            int k = rand() % + totalPics;
-            if(pics[k].getFre() == 0){
-                pics[k].setFre(1);
-                pics[k].setPos1(posArr[i].getX(), posArr[i].getY());
-            }else if(pics[k].getFre() == 1){
-                pics[k].setFre(2);
-                pics[k].setPos2(posArr[i].getX(), posArr[i].getY());
-            }else{
-                i--;
-            }
-        }
-        SDL_Surface* pic1 = loadImageFromFile(pics[0].getPath(), gScreen);
-        SDL_Texture* pic1Texture = SDL_CreateTextureFromSurface(gRenderer, pic1);
-        SDL_Surface* pic2 = loadImageFromFile(pics[1].getPath(), gScreen);
-        SDL_Texture* pic2Texture = SDL_CreateTextureFromSurface(gRenderer, pic2);
-        SDL_Surface* pic3 = loadImageFromFile(pics[2].getPath(), gScreen);
-        SDL_Texture* pic3Texture = SDL_CreateTextureFromSurface(gRenderer, pic3);
+        pic0Texture = SDL_CreateTextureFromSurface(gRenderer, pic0);
+        int totalPics;
+        Picture pics[10];
         string prevPath = "";
         Point prevPos = {0, 0};
         int count = 0;
-        while(!quit){
+        mainLayer(gRenderer,gScreen, SCREEN_WIDTH, SCREEN_HEIGHT);
+        while(!isQuit){
             SDL_GetMouseState(&x, &y);
             while(SDL_PollEvent(&gEvent) != 0){
                 if(gEvent.type == SDL_QUIT){
-                    quit = true;
+                    isQuit = true;
                 }
-                if(gEvent.type == SDL_MOUSEBUTTONDOWN){
-                    if(!pics[0].getFind() && x > pics[0].getPos1().getX() && x < pics[0].getPos1().getX() + 190 && y > pics[0].getPos1().getY() && y < pics[0].getPos1().getY() + 190){
-                        Mix_PlayChannel(-1, gClick, 0);
-                        applyImage(pic1Texture, gRenderer, pics[0].getPos1().getX(), pics[0].getPos1().getY(), 190, 190);
-                        SDL_RenderPresent(gRenderer);
-                        if(prevPos.getX() != pics[0].getPos1().getX() || prevPos.getY() != pics[0].getPos1().getY()){
-                            if(count == 0){
-                                count = 1;
-                                prevPath = pics[0].getPath();
-                                prevPos = pics[0].getPos1();
-                            }else{
-                                if(prevPath != pics[0].getPath()){
-                                    Mix_PlayChannel(-1, gWrong, 0);
-                                    applyImage(pic0Texture, gRenderer, pics[0].getPos1().getX(), pics[0].getPos1().getY(), 190, 190);
-                                    applyImage(pic0Texture, gRenderer, prevPos.getX(), prevPos.getY(), 190, 190);
-                                    SDL_Delay(500);
-                                    SDL_RenderPresent(gRenderer);
-                                }else{
-                                    Mix_PlayChannel(-1, gRight, 0);
-                                    pics[0].setFind(true);
-                                }
-                                prevPath = "";
-                                prevPos = {0,0};
-                                count = 0;
-                            }
-                        }
+                if(isStart){
+                    if(gEvent.type == SDL_MOUSEBUTTONDOWN && !isWin){
+                        playLevel1(gRenderer, pics, x, y, count, prevPath, prevPos, gClick, gWrong, gRight, gWin, pic0Texture, pic1Texture, pic2Texture, pic3Texture);
                     }
-                    if(!pics[0].getFind() && x > pics[0].getPos2().getX() && x < pics[0].getPos2().getX() + 190 && y > pics[0].getPos2().getY() && y < pics[0].getPos2().getY() + 190){
-                        Mix_PlayChannel(-1, gClick, 0);
-                        applyImage(pic1Texture, gRenderer, pics[0].getPos2().getX(), pics[0].getPos2().getY(), 190, 190);
-                        SDL_RenderPresent(gRenderer);
-                        if(prevPos.getX() != pics[0].getPos2().getX() || prevPos.getY() != pics[0].getPos2().getY()){    
-                                if(count == 0){
-                                count = 1;
-                                prevPath = pics[0].getPath();
-                                prevPos = pics[0].getPos2();
-                            }else{
-                                if(prevPath != pics[0].getPath()){
-                                    Mix_PlayChannel(-1, gWrong, 0);
-                                    applyImage(pic0Texture, gRenderer, pics[0].getPos2().getX(), pics[0].getPos2().getY(), 190, 190);
-                                    applyImage(pic0Texture, gRenderer, prevPos.getX(), prevPos.getY(), 190, 190);
-                                    SDL_Delay(500);
-                                    SDL_RenderPresent(gRenderer);
-                                }else{
-                                    Mix_PlayChannel(-1, gRight, 0);
-                                    pics[0].setFind(true);
-                                }
-                                prevPath = "";
-                                prevPos = {0,0};
-                                count = 0;
-                            }
-                        }
+                    if(pics[0].getFind() && pics[1].getFind() && pics[2].getFind()){
+                        winLayer(pics, gScreen, gRenderer, gWin);
+                        isWin = true;
                     }
-                    if(!pics[1].getFind() && x > pics[1].getPos1().getX() && x < pics[1].getPos1().getX() + 190 && y > pics[1].getPos1().getY() && y < pics[1].getPos1().getY() + 190){
-                        Mix_PlayChannel(-1, gClick, 0);
-                        applyImage(pic2Texture, gRenderer, pics[1].getPos1().getX(), pics[1].getPos1().getY(), 190, 190);
-                        SDL_RenderPresent(gRenderer);
-                        if(prevPos.getX() != pics[1].getPos1().getX() || prevPos.getY() != pics[1].getPos1().getY()){    
-                            if(count == 0){
-                                count = 1;
-                                prevPath = pics[1].getPath();
-                                prevPos = pics[1].getPos1();
-                            }else{
-                                if(prevPath != pics[1].getPath()){
-                                    Mix_PlayChannel(-1, gWrong, 0);
-                                    applyImage(pic0Texture, gRenderer, pics[1].getPos1().getX(), pics[1].getPos1().getY(), 190, 190);
-                                    applyImage(pic0Texture, gRenderer, prevPos.getX(), prevPos.getY(), 190, 190);
-                                    SDL_Delay(500);
-                                    SDL_RenderPresent(gRenderer);
-                                }else{
-                                    Mix_PlayChannel(-1, gRight, 0);
-                                    pics[1].setFind(true);
-                                }
-                                prevPath = "";
-                                prevPos = {0,0};
-                                count = 0;
-                            }
+                }
+                if(!isStart){
+                    if(gEvent.type == SDL_MOUSEBUTTONDOWN){
+                        if(x > 470 && x < 620 && y > 470 && y < 524){
+                            Mix_PlayChannel(-1, gClick, 0);
+                            helpLayer(gRenderer, gScreen, SCREEN_WIDTH, SCREEN_HEIGHT);
+                            isHelp = true;
                         }
-                    }
-                    if(!pics[1].getFind() && x >  pics[1].getPos2().getX() && x < pics[1].getPos2().getX() + 190 && y > pics[1].getPos2().getY() && y < pics[1].getPos2().getY() + 190){
-                        Mix_PlayChannel(-1, gClick, 0);
-                        applyImage(pic2Texture, gRenderer, pics[1].getPos2().getX(), pics[1].getPos2().getY(), 190, 190);
-                        SDL_RenderPresent(gRenderer);
-                        if(prevPos.getX() != pics[1].getPos2().getX() || prevPos.getY() != pics[1].getPos2().getY()){    
-                            if(count == 0){
-                                count = 1;
-                                prevPath = pics[1].getPath();
-                                prevPos = pics[1].getPos2();
-                            }else{
-                                if(prevPath != pics[1].getPath()){
-                                    Mix_PlayChannel(-1, gWrong, 0);
-                                    applyImage(pic0Texture, gRenderer, pics[1].getPos2().getX(), pics[1].getPos2().getY(), 190, 190);
-                                    applyImage(pic0Texture, gRenderer, prevPos.getX(), prevPos.getY(), 190, 190);
-                                    SDL_Delay(500);
-                                    SDL_RenderPresent(gRenderer);
-                                }else{
-                                    Mix_PlayChannel(-1, gRight, 0);
-                                    pics[1].setFind(true);
-                                }
-                                prevPath = "";
-                                prevPos = {0,0};
-                                count = 0;
-                            }
+                        if(x > 470 && x < 470+150 && y > 370 && y < 370+54){
+                            Mix_PlayChannel(-1, gClick, 0);
+                            loadLevel1(pics, totalPics, pic0Texture, SCREEN_WIDTH, SCREEN_HEIGHT, gScreen, gRenderer);
+                            loadLevel1Picture(pics);
+                            isStart = true;
                         }
-                    }
-                    if(!pics[2].getFind() && x > pics[2].getPos1().getX() && x < pics[2].getPos1().getX() + 190 && y > pics[2].getPos1().getY() && y < pics[2].getPos1().getY() + 190){
-                        Mix_PlayChannel(-1, gClick, 0);
-                        applyImage(pic3Texture, gRenderer, pics[2].getPos1().getX(), pics[2].getPos1().getY(), 190, 190);
-                        SDL_RenderPresent(gRenderer);
-                        if(prevPos.getX() != pics[2].getPos1().getX() || prevPos.getY() != pics[2].getPos1().getY()){    
-                            if(count == 0){
-                                count = 1;
-                                prevPath = pics[2].getPath();
-                                prevPos = pics[2].getPos1();
-                            }else{
-                                if(prevPath != pics[2].getPath()){
-                                    Mix_PlayChannel(-1, gWrong, 0);
-                                    applyImage(pic0Texture, gRenderer, pics[2].getPos1().getX(), pics[2].getPos1().getY(), 190, 190);
-                                    applyImage(pic0Texture, gRenderer, prevPos.getX(), prevPos.getY(), 190, 190);
-                                    SDL_Delay(500);
-                                    SDL_RenderPresent(gRenderer);
-                                }else{
-                                    Mix_PlayChannel(-1, gRight, 0);
-                                    pics[2].setFind(true);
-                                }
-                                prevPath = "";
-                                prevPos = {0,0};
-                                count = 0;
-                            }
-                        }
-                    }
-                    if(!pics[2].getFind() && x > pics[2].getPos2().getX() && x < pics[2].getPos2().getX() + 190 && y > pics[2].getPos2().getY() && y < pics[2].getPos2().getY() + 190){
-                        Mix_PlayChannel(-1, gClick, 0);
-                        applyImage(pic3Texture, gRenderer, pics[2].getPos2().getX(), pics[2].getPos2().getY(), 190, 190);
-                        SDL_RenderPresent(gRenderer);
-                        if(prevPos.getX() != pics[2].getPos2().getX() || prevPos.getY() != pics[2].getPos2().getY()){    
-                            if(count == 0){
-                                count = 1;
-                                prevPath = pics[2].getPath();
-                                prevPos = pics[2].getPos2();
-                            }else{
-                                if(prevPath != pics[2].getPath()){
-                                    Mix_PlayChannel(-1, gWrong, 0);
-                                    applyImage(pic0Texture, gRenderer, pics[2].getPos2().getX(), pics[2].getPos2().getY(), 190, 190);
-                                    applyImage(pic0Texture, gRenderer, prevPos.getX(), prevPos.getY(), 190, 190);
-                                    SDL_Delay(500);
-                                    SDL_RenderPresent(gRenderer);
-                                }else{
-                                    Mix_PlayChannel(-1, gRight, 0);
-                                    pics[2].setFind(true);
-                                }
-                                prevPath = "";
-                                prevPos = {0,0};
-                                count = 0;
-                            }
+                        if(x > 880 && x < 880+150 && y > 630 && y < 630+54 && isHelp){
+                            Mix_PlayChannel(-1, gClick, 0);
+                            mainLayer(gRenderer, gScreen, SCREEN_WIDTH, SCREEN_HEIGHT);
+                            isHelp = false;
                         }
                     }
                 }
-                if(pics[0].getFind() && pics[1].getFind() && pics[2].getFind()){
-                    SDL_Surface* winPic = loadImageFromFile("Pictures/congrat.png", gScreen);
-                    deleteBackGroundImage(winPic, 0, 0, 0);
-                    SDL_Texture* winTexture = SDL_CreateTextureFromSurface(gRenderer, winPic);
-                    applyImage(winTexture, gRenderer, 300, 130, 500, 400);
-                    SDL_Delay(400);
-                    SDL_RenderPresent(gRenderer);
-                    Mix_PlayChannel(-1, gWin, 0);
-                    pics[0].setFind(false);
-                    pics[1].setFind(false);
-                    pics[2].setFind(false);
-                }
+                
             }
         }
     }
@@ -297,13 +128,25 @@ bool init(){
     return success;
 }
 
+void loadLevel1Picture(Picture* pics){
+    SDL_Surface* pic1 = loadImageFromFile(pics[0].getPath(),gScreen);
+    pic1Texture = SDL_CreateTextureFromSurface(gRenderer, pic1);
+    SDL_Surface* pic2 = loadImageFromFile(pics[1].getPath(), gScreen);
+    pic2Texture = SDL_CreateTextureFromSurface(gRenderer, pic2);
+    SDL_Surface* pic3 = loadImageFromFile(pics[2].getPath(), gScreen);
+    pic3Texture = SDL_CreateTextureFromSurface(gRenderer, pic3);
+}
+
 void clean(){
     SDL_FreeSurface(gScreen);
     SDL_DestroyWindow(gWindow);
-    SDL_DestroyTexture(gTexture);
     SDL_RenderClear(gRenderer);
     Mix_FreeChunk(gClick);
     Mix_FreeChunk(gWrong);
     Mix_FreeChunk(gRight);
     Mix_FreeChunk(gWin);
+    SDL_DestroyTexture(pic0Texture);
+    SDL_DestroyTexture(pic1Texture);
+    SDL_DestroyTexture(pic2Texture);
+    SDL_DestroyTexture(pic3Texture);
 }
