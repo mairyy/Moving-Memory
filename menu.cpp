@@ -30,15 +30,22 @@ void helpLayer(SDL_Renderer* gRenderer, SDL_Surface* gScreen, int SCREEN_WIDTH, 
     SDL_RenderPresent(gRenderer);
 }
 
-void winLayer(Picture* pics, SDL_Surface* gScreen, SDL_Renderer* gRenderer, Mix_Chunk* gWin){
+void winLayer(Picture* pics, SDL_Surface* gScreen, SDL_Renderer* gRenderer, Mix_Chunk* gWin, int &level, int &totalPics){
     SDL_Surface* winPic = loadImageFromFile("Pictures/congrat.png", gScreen);
     deleteBackGroundImage(winPic, 0, 0, 0);
     SDL_Texture* winTexture = SDL_CreateTextureFromSurface(gRenderer, winPic);
-    applyImage(winTexture, gRenderer, 300, 130, 500, 400);
+    SDL_Surface* nextLevelPic = loadImageFromFile("Pictures/nextLevel.png", gScreen);
+    deleteBackGroundImage(nextLevelPic, 0, 0, 0);
+    SDL_Texture* nLevelTexture = SDL_CreateTextureFromSurface(gRenderer, nextLevelPic);
+    if(level == 1){
+        applyImage(nLevelTexture, gRenderer, 300, 130, 500, 400);
+    }else{
+        applyImage(winTexture, gRenderer, 300, 130, 500, 400);
+    }
     SDL_Delay(400);
     SDL_RenderPresent(gRenderer);
     Mix_PlayChannel(-1, gWin, 0);
-    pics[0].setFind(false);
-    pics[1].setFind(false);
-    pics[2].setFind(false);
+    for(int i = 0; i < totalPics; i++){
+        pics[i].setFind(false);
+    }
 }

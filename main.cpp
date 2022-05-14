@@ -11,6 +11,7 @@
 #include "pictures.h"
 #include "level1.h"
 #include "menu.h"
+#include "level2.h"
 
 using namespace std;
 
@@ -27,18 +28,19 @@ Mix_Chunk* gClick = NULL;
 Mix_Chunk* gWrong = NULL;
 Mix_Chunk* gRight = NULL;
 Mix_Chunk* gWin = NULL;
-SDL_Texture* pic0Texture = NULL, *pic1Texture = NULL, *pic2Texture = NULL, *pic3Texture = NULL;
+SDL_Texture* pic0Texture = NULL, *pic1Texture = NULL, *pic2Texture = NULL, *pic3Texture = NULL, *pic4Texture = NULL, *xTexture = NULL;
 
 bool init();
-void loadLevel1Picture(Picture* pics);
+void loadPictures(Picture* pics);
 void clean();
 
 int main(int argc, char* args[]){
-    int x, y;
-    bool isQuit = false, isWin = false, isStart = false, isHelp = false;
+    int x, y, level = 1;
+    bool isQuit = false, isWin = false, isStart = false, isHelp = false, next = false;
     if(!init()){
         cout << "Failed to initialize!\n";
     }else{
+        srand(time(0));
         gClick = Mix_LoadWAV("Sound-effects/soundClick.wav");
         gWrong = Mix_LoadWAV("Sound-effects/soundWrong.wav");
         gRight = Mix_LoadWAV("Sound-effects/soundRight.wav");
@@ -47,6 +49,7 @@ int main(int argc, char* args[]){
         pic0Texture = SDL_CreateTextureFromSurface(gRenderer, pic0);
         int totalPics;
         Picture pics[10];
+        loadPictures(pics);
         string prevPath = "";
         Point prevPos = {0, 0};
         int count = 0;
@@ -58,11 +61,33 @@ int main(int argc, char* args[]){
                     isQuit = true;
                 }
                 if(isStart){
-                    if(gEvent.type == SDL_MOUSEBUTTONDOWN && !isWin){
-                        playLevel1(gRenderer, pics, x, y, count, prevPath, prevPos, gClick, gWrong, gRight, gWin, pic0Texture, pic1Texture, pic2Texture, pic3Texture);
+                    if(gEvent.type == SDL_MOUSEBUTTONDOWN){
+                        if(!isWin){
+                            if(level == 1){
+                               playLevel1(gRenderer, pics, x, y, count, prevPath, prevPos, gClick, gWrong, gRight, gWin, pic0Texture, pic1Texture, pic2Texture, pic3Texture);
+
+                            } else{
+                                playLevel2(gRenderer, pics, x, y, count, prevPath, prevPos, gClick, gWrong, gRight, gWin, pic0Texture, pic1Texture, pic2Texture, pic3Texture, pic4Texture, xTexture);
+                            }
+                        }
                     }
-                    if(pics[0].getFind() && pics[1].getFind() && pics[2].getFind()){
-                        winLayer(pics, gScreen, gRenderer, gWin);
+                    if(level == 1 && pics[0].getFind() && pics[1].getFind() && pics[2].getFind()){
+                        winLayer(pics, gScreen, gRenderer, gWin, level, totalPics);
+                        for(int i = 0; i < totalPics; i++){
+                            pics[i].setFre(0);
+                            pics[i].setPos1(0, 0);
+                            pics[i].setPos2(0, 0);
+                        }
+                        totalPics = 0;
+                        count = 0;
+                        prevPath = "";
+                        prevPos = {0, 0};
+                        loadLevel2(level, pics, totalPics, pic0Texture, SCREEN_WIDTH, SCREEN_HEIGHT, gScreen, gRenderer);
+                        loadPictures(pics);
+                    }
+                    if(level == 2 && pics[0].getFind() && pics[1].getFind() && pics[2].getFind() && pics[3].getFind()){
+                        applyImage(xTexture, gRenderer, pics[4].getPos1().getX(), pics[4].getPos1().getY(), 180, 180);
+                        winLayer(pics, gScreen, gRenderer, gWin, level, totalPics);
                         isWin = true;
                     }
                 }
@@ -75,8 +100,7 @@ int main(int argc, char* args[]){
                         }
                         if(x > 470 && x < 470+150 && y > 370 && y < 370+54){
                             Mix_PlayChannel(-1, gClick, 0);
-                            loadLevel1(pics, totalPics, pic0Texture, SCREEN_WIDTH, SCREEN_HEIGHT, gScreen, gRenderer);
-                            loadLevel1Picture(pics);
+                            loadLevel1(level, pics, totalPics, pic0Texture, SCREEN_WIDTH, SCREEN_HEIGHT, gScreen, gRenderer);
                             isStart = true;
                         }
                         if(x > 880 && x < 880+150 && y > 630 && y < 630+54 && isHelp){
@@ -86,7 +110,6 @@ int main(int argc, char* args[]){
                         }
                     }
                 }
-                
             }
         }
     }
@@ -103,6 +126,7 @@ bool init(){
         cout << "SDL could not initialize! SDL Error: " << SDL_GetError() << endl;
         success = false;
     }else{
+        SDL_SetHint(SDL_HINT_VIDEO_X11_NET_WM_PING,"0");
         gWindow = SDL_CreateWindow("Moving Memory", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
         if(gWindow == NULL){
             cout << "Window could not be created! SDL Error: " << SDL_GetError() << endl;
@@ -128,13 +152,22 @@ bool init(){
     return success;
 }
 
-void loadLevel1Picture(Picture* pics){
+void loadPictures(Picture* pics){
+    int totalPics = 5;
+    string picsPath[totalPics] = {"Pictures/1.png", "Pictures/2.png", "Pictures/3.png", "Pictures/4.png", "Pictures/x.png"};
+    for(int i = 0; i < totalPics; i++){
+        pics[i].setPath(picsPath[i]);
+    }
     SDL_Surface* pic1 = loadImageFromFile(pics[0].getPath(),gScreen);
     pic1Texture = SDL_CreateTextureFromSurface(gRenderer, pic1);
     SDL_Surface* pic2 = loadImageFromFile(pics[1].getPath(), gScreen);
     pic2Texture = SDL_CreateTextureFromSurface(gRenderer, pic2);
     SDL_Surface* pic3 = loadImageFromFile(pics[2].getPath(), gScreen);
     pic3Texture = SDL_CreateTextureFromSurface(gRenderer, pic3);
+    SDL_Surface* pic4 = loadImageFromFile(pics[3].getPath(), gScreen);
+    pic4Texture = SDL_CreateTextureFromSurface(gRenderer, pic4);
+    SDL_Surface* x = loadImageFromFile(pics[4].getPath(), gScreen);
+    xTexture = SDL_CreateTextureFromSurface(gRenderer, x);
 }
 
 void clean(){
