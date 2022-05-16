@@ -6,6 +6,8 @@ Picture::Picture(){
     pos2 = {0, 0};
     frequency = 0;
     find = false;
+    firstClick1 = true;
+    firstClick2 = true;
 }
 
 string Picture::getPath(){
@@ -48,4 +50,20 @@ bool Picture::getFind(){
 
 void Picture::setFind(bool find){
     this->find = find;
+}
+
+bool Picture::getFirstClick1(){
+    return firstClick1;
+}
+
+void Picture::setFirstClick1(bool firstClick1){
+    this->firstClick1 = firstClick1;
+}
+
+bool Picture::getFirstClick2(){
+    return firstClick2;
+}
+
+void Picture::setFirstClick2(bool firstClick2){
+    this->firstClick2 = firstClick2;
 }

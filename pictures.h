@@ -25,7 +25,7 @@ class Picture{
     string path;
     Point pos1, pos2;
     int frequency;
-    bool find;
+    bool find, firstClick1, firstClick2;
 public:
     Picture();
     string getPath();
@@ -38,6 +38,10 @@ public:
     void setFre(int frequency);
     bool getFind();
     void setFind(bool find);
+    bool getFirstClick1();
+    void setFirstClick1(bool firstClick1);
+    bool getFirstClick2();
+    void setFirstClick2(bool firstClick2);
 };
 
 #endif
