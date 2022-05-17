@@ -9,5 +9,6 @@ void mainLayer(SDL_Renderer* gRenderer, SDL_Surface* gScreen, int SCREEN_WIDTH, 
 void helpLayer(SDL_Renderer* gRenderer, SDL_Surface* gScreen, int SCREEN_WIDTH, int SCREEN_HEIGHT);
 void winLayer(Picture* pics, SDL_Surface* gScreen, SDL_Renderer* gRenderer, Mix_Chunk* gWin, int &level, int &totalPics);
 void nextLevelLayer(SDL_Surface* gScreen, SDL_Renderer* gRenderer);
+void highScoreLayer(SDL_Renderer* gRenderer, SDL_Surface* gScreen, int SCREEN_WIDTH, int SCREEN_HEIGHT, int &highScore);
 
 #endif

@@ -7,6 +7,7 @@
 #include <string>
 #include <cmath>
 #include <ctime>
+#include <fstream>
 #include "common.h"
 #include "pictures.h"
 #include "level1.h"
@@ -38,11 +39,15 @@ void close();
 
 int main(int argc, char* args[]){
     int x, y, level = 1;
-    SDL_Texture* sT;
-    bool isQuit = false, isWin = false, isStart = false, isHelp = false, next = false;
+    bool isQuit = false, isWin = false, isStart = false, isHelp = false, isScore = false;
     if(!init()){
         cout << "Failed to initialize!\n";
     }else{
+        int highScore;
+        ifstream infile;
+        infile.open("highScore.txt");
+        infile >> highScore;
+        infile.close();
         srand(time(0));
         gClick = Mix_LoadWAV("Sound-effects/soundClick.wav");
         gWrong = Mix_LoadWAV("Sound-effects/soundWrong.wav");
@@ -69,7 +74,7 @@ int main(int argc, char* args[]){
                     if(gEvent.type == SDL_MOUSEBUTTONDOWN){
                         if(!isWin){
                             if(level == 1){
-                               playLevel1(gScreen, gTexture, gFont, scoreTexture, score, gRenderer, pics, x, y, count, prevPath, prevPos, gClick, gWrong, gRight, gWin, pic0Texture, pic1Texture, pic2Texture, pic3Texture);
+                                playLevel1(gScreen, gTexture, gFont, scoreTexture, score, gRenderer, pics, x, y, count, prevPath, prevPos, gClick, gWrong, gRight, gWin, pic0Texture, pic1Texture, pic2Texture, pic3Texture);
                             } else{
                                 playLevel2(gScreen, gTexture, gFont, scoreTexture, score,gRenderer, pics, x, y, count, prevPath, prevPos, gClick, gWrong, gRight, gWin, pic0Texture, pic1Texture, pic2Texture, pic3Texture, pic4Texture, xTexture);
                             }
@@ -100,7 +105,7 @@ int main(int argc, char* args[]){
                 }
                 if(!isStart){
                     if(gEvent.type == SDL_MOUSEBUTTONDOWN){
-                        if(x > 470 && x < 620 && y > 470 && y < 524 && !isHelp){
+                        if(x > 470 && x < 620 && y > 470 && y < 524 && !isHelp && !isScore){
                             Mix_PlayChannel(-1, gClick, 0);
                             helpLayer(gRenderer, gScreen, SCREEN_WIDTH, SCREEN_HEIGHT);
                             isHelp = true;
@@ -111,14 +116,26 @@ int main(int argc, char* args[]){
                             loadScore(score, gRenderer, gFont, gTexture);
                             isStart = true;
                         }
-                        if(x > 880 && x < 880+150 && y > 630 && y < 630+54 && isHelp){
+                        if(x > 880 && x < 880+150 && y > 630 && y < 630+54 && (isHelp || isScore)){
                             Mix_PlayChannel(-1, gClick, 0);
                             mainLayer(gRenderer, gScreen, SCREEN_WIDTH, SCREEN_HEIGHT);
                             isHelp = false;
+                            isScore = false;
+                        }
+                        if(x > 470 && x < 620 && y > 570 && y < 624 && !isScore && !isHelp){
+                            Mix_PlayChannel(-1, gClick, 0);
+                            highScoreLayer(gRenderer, gScreen, SCREEN_WIDTH, SCREEN_HEIGHT, highScore);
+                            isScore = true;
                         }
                     }
                 }
             }
+        }
+        if(score >= highScore){
+            ofstream outfile;
+            outfile.open("highScore.txt");
+            outfile << score;
+            outfile.close();
         }
     }
     close();

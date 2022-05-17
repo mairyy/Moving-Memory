@@ -16,5 +16,6 @@ void applyImage(SDL_Texture* texture, SDL_Renderer* renderer, int x, int y, int 
 void loadText(SDL_Renderer* renderer, SDL_Texture* textTexture, TTF_Font* font, string text, string textFont, int fontSize, Uint8 red, Uint8 green, Uint8 blue);
 void applyText(SDL_Renderer* renderer, SDL_Texture* texture, TTF_Font* font, string text, int x, int y);
 void loadScore(int &score, SDL_Renderer* gRenderer, TTF_Font* gFont, SDL_Texture* gTexture);
+void loadHighScore(int &highScore, SDL_Renderer* gRenderer, TTF_Font* gFont, SDL_Texture* gTexture);
 
 #endif

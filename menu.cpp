@@ -1,4 +1,5 @@
 #include "menu.h"
+#include "common.h"
 
 void mainLayer(SDL_Renderer* gRenderer, SDL_Surface* gScreen, int SCREEN_WIDTH, int SCREEN_HEIGHT){
     SDL_Surface* startBackGroundImage = loadImageFromFile("Pictures/startGameBackGround.png", gScreen);
@@ -15,6 +16,11 @@ void mainLayer(SDL_Renderer* gRenderer, SDL_Surface* gScreen, int SCREEN_WIDTH, 
     SDL_Texture* helpButtonTexture = SDL_CreateTextureFromSurface(gRenderer, helpButtonImage);
     applyImage(helpButtonTexture, gRenderer, 470, 470, 150, 54);
     
+    SDL_Surface* highScoreButtonImage = loadImageFromFile("Pictures/highScore.png", gScreen);
+    highScoreButtonImage = deleteBackGroundImage(highScoreButtonImage, 0, 0, 0);
+    SDL_Texture* highScoreButtonTexture = SDL_CreateTextureFromSurface(gRenderer, highScoreButtonImage);
+    applyImage(highScoreButtonTexture, gRenderer, 470, 570, 150, 54);
+
     SDL_RenderPresent(gRenderer);
 }
 
@@ -32,10 +38,10 @@ void helpLayer(SDL_Renderer* gRenderer, SDL_Surface* gScreen, int SCREEN_WIDTH, 
 
 void winLayer(Picture* pics, SDL_Surface* gScreen, SDL_Renderer* gRenderer, Mix_Chunk* gWin, int &level, int &totalPics){
     SDL_Surface* winPic = loadImageFromFile("Pictures/congrat.png", gScreen);
-    deleteBackGroundImage(winPic, 0, 0, 0);
+    winPic = deleteBackGroundImage(winPic, 0, 0, 0);
     SDL_Texture* winTexture = SDL_CreateTextureFromSurface(gRenderer, winPic);
     SDL_Surface* nextLevelPic = loadImageFromFile("Pictures/nextLevel.png", gScreen);
-    deleteBackGroundImage(nextLevelPic, 0, 0, 0);
+    nextLevelPic = deleteBackGroundImage(nextLevelPic, 0, 0, 0);
     SDL_Texture* nLevelTexture = SDL_CreateTextureFromSurface(gRenderer, nextLevelPic);
     if(level == 1){
         applyImage(nLevelTexture, gRenderer, 300, 130, 500, 400);
@@ -48,4 +54,19 @@ void winLayer(Picture* pics, SDL_Surface* gScreen, SDL_Renderer* gRenderer, Mix_
     for(int i = 0; i < totalPics; i++){
         pics[i].setFind(false);
     }
+}
+
+void highScoreLayer(SDL_Renderer* gRenderer, SDL_Surface* gScreen, int SCREEN_WIDTH, int SCREEN_HEIGHT, int &highScore){
+    SDL_Surface* highScoreImage = loadImageFromFile("Pictures/highScoreImage.png", gScreen);
+    SDL_Texture* highScoreImageTexture = SDL_CreateTextureFromSurface(gRenderer, highScoreImage);
+    applyImage(highScoreImageTexture, gRenderer, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+    SDL_Surface* backButtonIamge = loadImageFromFile("Pictures/back.png", gScreen);
+    backButtonIamge = deleteBackGroundImage(backButtonIamge, 0, 0, 0);
+    SDL_Texture* backButtonTexture = SDL_CreateTextureFromSurface(gRenderer, backButtonIamge);
+    applyImage(backButtonTexture, gRenderer, 880, 630, 150, 54);
+    TTF_Font* gFont = NULL;
+    SDL_Texture* gTexture = NULL;
+    loadHighScore(highScore, gRenderer, gFont, gTexture);
+    SDL_Delay(300);
+    SDL_RenderPresent(gRenderer);
 }

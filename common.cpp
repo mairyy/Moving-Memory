@@ -88,3 +88,22 @@ void loadScore(int &score, SDL_Renderer* gRenderer, TTF_Font* gFont, SDL_Texture
 	SDL_RenderCopy(gRenderer, gTexture, &srcRest, &desRect);
     SDL_RenderPresent(gRenderer);
 }
+
+void loadHighScore(int &highScore, SDL_Renderer* gRenderer, TTF_Font* gFont, SDL_Texture* gTexture){
+    gFont = TTF_OpenFont("Fonts/AsapSemiBold.ttf", 100);
+	SDL_Color color = {255, 255, 255};
+	string text = to_string(highScore);
+	SDL_Surface* surface = TTF_RenderText_Solid(gFont, text.c_str(), color);
+	gTexture = SDL_CreateTextureFromSurface(gRenderer, surface);
+	SDL_FreeSurface(surface);
+	SDL_Rect srcRest;
+	SDL_Rect desRect;
+	TTF_SizeText(gFont, text.c_str(), &srcRest.w, &srcRest.h);
+	srcRest.x = 0;
+	srcRest.y =  0;
+	desRect.x = 500;
+	desRect.y = 250;
+	desRect.w = srcRest.w;
+	desRect.h = srcRest.h;
+	SDL_RenderCopy(gRenderer, gTexture, &srcRest, &desRect);
+}
