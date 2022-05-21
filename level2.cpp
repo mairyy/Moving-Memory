@@ -21,6 +21,7 @@ void loadPictures2(Picture *pics, SDL_Renderer* gRenderer, SDL_Surface* gScreen)
     SDL_FreeSurface(pic2);
     SDL_FreeSurface(pic3);
     SDL_FreeSurface(pic4);
+    SDL_FreeSurface(x);
     SDL_FreeSurface(pic);
 }
 
@@ -52,7 +53,8 @@ void loadLevel2(int &level, Picture *pics, int &totalPics, int SCREEN_WIDTH, int
     }
     SDL_Surface* backGround = loadImageFromFile("Pictures/level2.png", screen);
     SDL_Texture* backGroundTexture = SDL_CreateTextureFromSurface(renderer, backGround);
-    applyImage(backGroundTexture, renderer, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);for(int i = 0; i < totalPos; i++){
+    applyImage(backGroundTexture, renderer, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+    for(int i = 0; i < totalPos; i++){
         applyImage(pic0Texture2, renderer, posArr[i].getX(), posArr[i].getY(), 180, 180);
     }
     applyImage(scoreTexture2, renderer, 903, 257, 158, 203);

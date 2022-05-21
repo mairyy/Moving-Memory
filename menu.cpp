@@ -43,7 +43,7 @@ void winLayer(Picture* pics, SDL_Surface* gScreen, SDL_Renderer* gRenderer, Mix_
     SDL_Surface* nextLevelPic = loadImageFromFile("Pictures/nextLevel.png", gScreen);
     nextLevelPic = deleteBackGroundImage(nextLevelPic, 0, 0, 0);
     SDL_Texture* nLevelTexture = SDL_CreateTextureFromSurface(gRenderer, nextLevelPic);
-    if(level == 1){
+    if(level == 1 || level == 2){
         applyImage(nLevelTexture, gRenderer, 300, 130, 500, 400);
     }else{
         applyImage(winTexture, gRenderer, 300, 130, 500, 400);

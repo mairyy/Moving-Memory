@@ -7,6 +7,7 @@
 #include "level1.h"
 #include "menu.h"
 #include "level2.h"
+#include "level3.h"
 
 using namespace std;
 
@@ -63,9 +64,10 @@ int main(int argc, char* args[]){
                         if(!isWin){
                             if(level == 1){
                                 playLevel1(gScreen, gTexture, gFont, score, gRenderer, pics, x, y, count, prevPath, prevPos, gClick, gWrong, gRight, gWin);
-                            }
-                            else{
+                            }else if (level == 2){
                                 playLevel2(gScreen, gTexture, gFont, score, gRenderer, pics, x, y, count, prevPath, prevPos, gClick, gWrong, gRight, gWin);
+                            }else{
+                                playLevel3(gScreen, gTexture, gFont, score, gRenderer, pics, x, y, count, prevPath, prevPos, gClick, gWrong, gRight, gWin);
                             }
                         }
                     }
@@ -87,9 +89,25 @@ int main(int argc, char* args[]){
                     if(level == 2 && pics[0].getFind() && pics[1].getFind() && pics[2].getFind() && pics[3].getFind()){
                         applyImage(xTexture, gRenderer, pics[4].getPos1().getX(), pics[4].getPos1().getY(), 180, 180);
                         winLayer(pics, gScreen, gRenderer, gWin, level, totalPics);
-                        isWin = true;
+                        for(int i = 0; i < totalPics; i++){
+                            pics[i].setFre(0);
+                            pics[i].setPos1(0, 0);
+                            pics[i].setPos2(0, 0);
+                            pics[i].setFirstClick1(true);
+                            pics[i].setFirstClick2(true);
+                        }
+                        count = 0;
+                        prevPath = "";
+                        prevPos = {0, 0};
+                        loadLevel3(level, pics, totalPics, SCREEN_WIDTH, SCREEN_HEIGHT, gScreen, gRenderer);
+                        loadScore(score, gRenderer, gFont, gTexture);
                     }
-                    
+                    if(level == 3 && pics[0].getFind() && pics[1].getFind() && pics[2].getFind() && pics[3].getFind() && pics[5].getFind()){
+                        applyImage(xTexture, gRenderer, pics[4].getPos1().getX(), pics[4].getPos1().getY(), 175, 175);
+                        applyImage(xTexture, gRenderer, pics[4].getPos2().getX(), pics[4].getPos2().getY(), 175, 175);
+                        winLayer(pics, gScreen, gRenderer, gWin, level, totalPics);
+                        isWin = true;                        
+                    }
                 }
                 if(!isStart){
                     if(gEvent.type == SDL_MOUSEBUTTONDOWN){
@@ -165,13 +183,14 @@ bool init(){
 }
 
 void loadPictures(Picture* pics){
-    int totalPics = 5;
-    string picsPath[totalPics] = {"Pictures/1.png", "Pictures/2.png", "Pictures/3.png", "Pictures/4.png", "Pictures/x.png"};
+    int totalPics = 6;
+    string picsPath[totalPics] = {"Pictures/1.png", "Pictures/2.png", "Pictures/3.png", "Pictures/4.png", "Pictures/x.png", "Pictures/5.png"};
     for(int i = 0; i < totalPics; i++){
         pics[i].setPath(picsPath[i]);
     }
     loadPictures1(pics, gRenderer, gScreen);
     loadPictures2(pics, gRenderer, gScreen);
+    loadPictures3(pics, gRenderer, gScreen);
     SDL_Surface* x = loadImageFromFile(pics[4].getPath(), gScreen);
     xTexture = SDL_CreateTextureFromSurface(gRenderer, x);
 }
@@ -188,6 +207,7 @@ void close(){
     SDL_DestroyTexture(xTexture);
     clean1();
     clean2();
+    clean3();
     IMG_Quit();
     Mix_Quit();
     TTF_Quit();
