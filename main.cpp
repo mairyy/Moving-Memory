@@ -1,10 +1,4 @@
-#include <windows.h>
-#include <SDL.h>
-#include <SDL_image.h>
-#include <SDL_ttf.h>
 #include <SDL_mixer.h>
-#include <iostream>
-#include <string>
 #include <cmath>
 #include <ctime>
 #include <fstream>
@@ -18,7 +12,6 @@ using namespace std;
 
 #define SCREEN_WIDTH 1100
 #define SCREEN_HEIGHT 700
-#define SCREEN_BPP 32
 
 SDL_Surface* gScreen = NULL;
 SDL_Window* gWindow = NULL;
@@ -30,8 +23,7 @@ Mix_Chunk* gClick = NULL;
 Mix_Chunk* gWrong = NULL;
 Mix_Chunk* gRight = NULL;
 Mix_Chunk* gWin = NULL;
-SDL_Texture* pic0Texture = NULL, *pic1Texture = NULL, *pic2Texture = NULL, *pic3Texture = NULL, *pic4Texture = NULL, *xTexture = NULL;
-SDL_Texture* scoreTexture = NULL;
+SDL_Texture* xTexture = NULL;
 
 bool init();
 void loadPictures(Picture* pics);
@@ -53,11 +45,7 @@ int main(int argc, char* args[]){
         gWrong = Mix_LoadWAV("Sound-effects/soundWrong.wav");
         gRight = Mix_LoadWAV("Sound-effects/soundRight.wav");
         gWin = Mix_LoadWAV("Sound-effects/soundWin.wav");
-        SDL_Surface* pic0 = loadImageFromFile("Pictures/0.png",gScreen);
-        pic0Texture = SDL_CreateTextureFromSurface(gRenderer, pic0);
-        SDL_FreeSurface(pic0);
         int totalPics, score = 0;
-        string strScore;
         Picture pics[10];
         loadPictures(pics);
         string prevPath = "";
@@ -74,9 +62,10 @@ int main(int argc, char* args[]){
                     if(gEvent.type == SDL_MOUSEBUTTONDOWN){
                         if(!isWin){
                             if(level == 1){
-                                playLevel1(gScreen, gTexture, gFont, scoreTexture, score, gRenderer, pics, x, y, count, prevPath, prevPos, gClick, gWrong, gRight, gWin, pic0Texture, pic1Texture, pic2Texture, pic3Texture);
-                            } else{
-                                playLevel2(gScreen, gTexture, gFont, scoreTexture, score,gRenderer, pics, x, y, count, prevPath, prevPos, gClick, gWrong, gRight, gWin, pic0Texture, pic1Texture, pic2Texture, pic3Texture, pic4Texture, xTexture);
+                                playLevel1(gScreen, gTexture, gFont, score, gRenderer, pics, x, y, count, prevPath, prevPos, gClick, gWrong, gRight, gWin);
+                            }
+                            else{
+                                playLevel2(gScreen, gTexture, gFont, score, gRenderer, pics, x, y, count, prevPath, prevPos, gClick, gWrong, gRight, gWin);
                             }
                         }
                     }
@@ -89,11 +78,10 @@ int main(int argc, char* args[]){
                             pics[i].setFirstClick1(true);
                             pics[i].setFirstClick2(true);
                         }
-                        totalPics = 0;
                         count = 0;
                         prevPath = "";
                         prevPos = {0, 0};
-                        loadLevel2(level, pics, totalPics, pic0Texture, SCREEN_WIDTH, SCREEN_HEIGHT, gScreen, gRenderer, scoreTexture);
+                        loadLevel2(level, pics, totalPics, SCREEN_WIDTH, SCREEN_HEIGHT, gScreen, gRenderer);
                         loadScore(score, gRenderer, gFont, gTexture);
                     }
                     if(level == 2 && pics[0].getFind() && pics[1].getFind() && pics[2].getFind() && pics[3].getFind()){
@@ -112,7 +100,7 @@ int main(int argc, char* args[]){
                         }
                         if(x > 470 && x < 470+150 && y > 370 && y < 370+54 && !isHelp){
                             Mix_PlayChannel(-1, gClick, 0);
-                            loadLevel1(level, pics, totalPics, pic0Texture, SCREEN_WIDTH, SCREEN_HEIGHT, gScreen, gRenderer, scoreTexture);
+                            loadLevel1(level, pics, totalPics, SCREEN_WIDTH, SCREEN_HEIGHT, gScreen, gRenderer);
                             loadScore(score, gRenderer, gFont, gTexture);
                             isStart = true;
                         }
@@ -177,24 +165,15 @@ bool init(){
 }
 
 void loadPictures(Picture* pics){
-    int totalPics = 6;
-    string picsPath[totalPics] = {"Pictures/1.png", "Pictures/2.png", "Pictures/3.png", "Pictures/4.png", "Pictures/x.png", "Pictures/score.png"};
+    int totalPics = 5;
+    string picsPath[totalPics] = {"Pictures/1.png", "Pictures/2.png", "Pictures/3.png", "Pictures/4.png", "Pictures/x.png"};
     for(int i = 0; i < totalPics; i++){
         pics[i].setPath(picsPath[i]);
     }
-    SDL_Surface* pic1 = loadImageFromFile(pics[0].getPath(),gScreen);
-    pic1Texture = SDL_CreateTextureFromSurface(gRenderer, pic1);
-    SDL_Surface* pic2 = loadImageFromFile(pics[1].getPath(), gScreen);
-    pic2Texture = SDL_CreateTextureFromSurface(gRenderer, pic2);
-    SDL_Surface* pic3 = loadImageFromFile(pics[2].getPath(), gScreen);
-    pic3Texture = SDL_CreateTextureFromSurface(gRenderer, pic3);
-    SDL_Surface* pic4 = loadImageFromFile(pics[3].getPath(), gScreen);
-    pic4Texture = SDL_CreateTextureFromSurface(gRenderer, pic4);
+    loadPictures1(pics, gRenderer, gScreen);
+    loadPictures2(pics, gRenderer, gScreen);
     SDL_Surface* x = loadImageFromFile(pics[4].getPath(), gScreen);
     xTexture = SDL_CreateTextureFromSurface(gRenderer, x);
-    SDL_Surface* pic = loadImageFromFile(pics[5].getPath(), gScreen);
-    deleteBackGroundImage(pic, 0, 0, 0);
-    scoreTexture = SDL_CreateTextureFromSurface(gRenderer, pic);
 }
 
 void close(){
@@ -206,13 +185,9 @@ void close(){
     Mix_FreeChunk(gWrong);
     Mix_FreeChunk(gRight);
     Mix_FreeChunk(gWin);
-    SDL_DestroyTexture(pic0Texture);
-    SDL_DestroyTexture(pic1Texture);
-    SDL_DestroyTexture(pic2Texture);
-    SDL_DestroyTexture(pic3Texture);
-    SDL_DestroyTexture(pic4Texture);
     SDL_DestroyTexture(xTexture);
-    SDL_DestroyTexture(scoreTexture);
+    clean1();
+    clean2();
     IMG_Quit();
     Mix_Quit();
     TTF_Quit();

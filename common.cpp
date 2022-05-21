@@ -101,7 +101,7 @@ void loadHighScore(int &highScore, SDL_Renderer* gRenderer, TTF_Font* gFont, SDL
 	TTF_SizeText(gFont, text.c_str(), &srcRest.w, &srcRest.h);
 	srcRest.x = 0;
 	srcRest.y =  0;
-	desRect.x = 500;
+	desRect.x = 495;
 	desRect.y = 250;
 	desRect.w = srcRest.w;
 	desRect.h = srcRest.h;
