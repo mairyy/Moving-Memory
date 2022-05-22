@@ -32,43 +32,6 @@ void applyImage(SDL_Texture* texture, SDL_Renderer* renderer, int x, int y, int 
     SDL_RenderCopy(renderer, texture, NULL, &desRect);
 }
 
-void loadText(SDL_Renderer* renderer, SDL_Texture* textTexture, TTF_Font* font, string text, string textFont, int fontSize, Uint8 red, Uint8 green, Uint8 blue){
-    if(TTF_Init() == -1){
-        cout << "TTF Error: " << TTF_GetError() << endl;
-    }else{
-        font = TTF_OpenFont(textFont.c_str(), fontSize);
-        if(font == NULL){
-            cout << "Failed to load font! SDL_ttf Error: " << TTF_GetError() << endl;
-        }else{
-            SDL_Color textColor = {red, green, blue};
-            SDL_Surface* textSurface = TTF_RenderText_Solid(font, text.c_str(), textColor);
-            if(textSurface == NULL){
-                cout << "Unable to render text surface! SDL_ttf Error: " << TTF_GetError() << endl;
-            }else{
-                textTexture = SDL_CreateTextureFromSurface(renderer, textSurface);
-                if(textTexture == NULL){
-                    cout << "Unable to create texture from rendered text! SDL Error: " << SDL_GetError() << endl;
-                }
-            }
-            SDL_FreeSurface(textSurface);
-        }
-    }
-}
-
-void applyText(SDL_Renderer* renderer, SDL_Texture* texture, TTF_Font* font, string text, int x, int y){
-    SDL_Rect srcRest;
-    SDL_Rect desRect;
-    TTF_SizeText(font, text.c_str(), &srcRest.w, &srcRest.h);
-    srcRest.x = 0;
-    srcRest.y = 0;
-    desRect.x = x;
-    desRect.y = y;
-    desRect.w = srcRest.w;
-    desRect.h = srcRest.h;
-    SDL_RenderCopy(renderer, texture, &srcRest, &desRect);
-    SDL_RenderPresent(renderer);
-}
-
 void loadScore(int &score, SDL_Renderer* gRenderer, TTF_Font* gFont, SDL_Texture* gTexture){
     gFont = TTF_OpenFont("Fonts/AsapSemiBold.ttf", 40);
 	SDL_Color color = {255, 255, 255};

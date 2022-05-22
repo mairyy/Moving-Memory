@@ -39,6 +39,7 @@ void loadLevel1(int &level, Picture *pics, int &totalPics, int SCREEN_WIDTH, int
     SDL_Surface* backGround = loadImageFromFile("Pictures/level1.png", screen);
     SDL_Texture* backGroundTexture = SDL_CreateTextureFromSurface(renderer, backGround);
     applyImage(backGroundTexture, renderer, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+    SDL_FreeSurface(backGround);
     for(int i = 0; i < totalPos; i++){
         applyImage(pic0Texture1, renderer, posArr[i].getX(), posArr[i].getY(), 190, 190);
     }

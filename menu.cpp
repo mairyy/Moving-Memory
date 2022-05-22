@@ -21,6 +21,11 @@ void mainLayer(SDL_Renderer* gRenderer, SDL_Surface* gScreen, int SCREEN_WIDTH, 
     SDL_Texture* highScoreButtonTexture = SDL_CreateTextureFromSurface(gRenderer, highScoreButtonImage);
     applyImage(highScoreButtonTexture, gRenderer, 470, 570, 150, 54);
 
+    SDL_FreeSurface(startBackGroundImage);
+    SDL_FreeSurface(startButtonImage);
+    SDL_FreeSurface(helpButtonImage);
+    SDL_FreeSurface(highScoreButtonImage);
+
     SDL_RenderPresent(gRenderer);
 }
 
@@ -28,10 +33,12 @@ void helpLayer(SDL_Renderer* gRenderer, SDL_Surface* gScreen, int SCREEN_WIDTH, 
     SDL_Surface* helpImage = loadImageFromFile("Pictures/helpImage.png", gScreen);
     SDL_Texture* helpImageTexture = SDL_CreateTextureFromSurface(gRenderer, helpImage);
     applyImage(helpImageTexture, gRenderer, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
-    SDL_Surface* backButtonIamge = loadImageFromFile("Pictures/back.png", gScreen);
-    backButtonIamge = deleteBackGroundImage(backButtonIamge, 0, 0, 0);
-    SDL_Texture* backButtonTexture = SDL_CreateTextureFromSurface(gRenderer, backButtonIamge);
+    SDL_Surface* backButtonImage = loadImageFromFile("Pictures/back.png", gScreen);
+    backButtonImage = deleteBackGroundImage(backButtonImage, 0, 0, 0);
+    SDL_Texture* backButtonTexture = SDL_CreateTextureFromSurface(gRenderer, backButtonImage);
     applyImage(backButtonTexture, gRenderer, 880, 630, 150, 54);
+    SDL_FreeSurface(helpImage);
+    SDL_FreeSurface(backButtonImage);
     SDL_Delay(300);
     SDL_RenderPresent(gRenderer);
 }
@@ -48,6 +55,8 @@ void winLayer(Picture* pics, SDL_Surface* gScreen, SDL_Renderer* gRenderer, Mix_
     }else{
         applyImage(winTexture, gRenderer, 300, 130, 500, 400);
     }
+    SDL_FreeSurface(winPic);
+    SDL_FreeSurface(nextLevelPic);
     SDL_Delay(400);
     SDL_RenderPresent(gRenderer);
     Mix_PlayChannel(-1, gWin, 0);
@@ -67,6 +76,8 @@ void highScoreLayer(SDL_Renderer* gRenderer, SDL_Surface* gScreen, int SCREEN_WI
     TTF_Font* gFont = NULL;
     SDL_Texture* gTexture = NULL;
     loadHighScore(highScore, gRenderer, gFont, gTexture);
+    SDL_FreeSurface(highScoreImage);
+    SDL_FreeSurface(backButtonIamge);
     SDL_Delay(300);
     SDL_RenderPresent(gRenderer);
 }

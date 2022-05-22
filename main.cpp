@@ -193,6 +193,7 @@ void loadPictures(Picture* pics){
     loadPictures3(pics, gRenderer, gScreen);
     SDL_Surface* x = loadImageFromFile(pics[4].getPath(), gScreen);
     xTexture = SDL_CreateTextureFromSurface(gRenderer, x);
+    SDL_FreeSurface(x);
 }
 
 void close(){
