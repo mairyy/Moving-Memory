@@ -9,7 +9,8 @@ Game Lật ảnh viết bằng ngôn ngữ C++ và sử dụng thư viện đồ
 
 
 **2. Chạy code**
-  * Gõ lệnh `.\main.exe` để chạy chương trình
+  * Gõ lênh `cd Moving-Memory`
+  * Sau đó gõ lệnh `.\main.exe` để chạy chương trình
 
 ***
 ## Mô tả chung về trò chơi
