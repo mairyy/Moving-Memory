@@ -84,6 +84,5 @@ Cải tiến code cho tối ưu hơn và thêm vào các tính năng chưa thự
 **3. Điều tâm đắc rút ra được sau khi hoàn thiện chương trình:**
 Khi thực hiện dự án game này, em đã học thêm được nhiều kiến thức mới (_làm game có đồ họa bằng SDL2, tách file, viết Makefile, kĩ năng fix bugs, sử dung Github và viết file markdown này..._). 
 Em cũng được trải nghiệm cảm giác rất mới lạ đó là tự tạo ra một game của chính mình, mang màu sắc cá tính riêng của mình. 
-Và chỉ khi thực hiện game này, em mới thật sự thấy được một phần cách mà các lập trình viên tạo ra một chương trình, điều đó thực sự rất khó và cần kết hợp rất nhiều thứ (_từ tư duy, sáng tạo đến cả sự kiên nhẫn_)
-Đặc biệt là sau khi làm dự án này em không thể chơi game một cách bình thường được :"((, mỗi khi chơi em luôn tự hỏi để code ra được game như này thì cần nhưng giai đoạn nào, khó như thế nào.
+Và chỉ khi thực hiện game này, em mới thật sự thấy được một phần cách mà các lập trình viên tạo ra một chương trình, điều đó thực sự rất khó và cần kết hợp rất nhiều thứ (_từ tư duy, sáng tạo đến cả sự kiên nhẫn_).
 Tóm lại, khi thực hiện dự án này em đã học được nhiều điều mới, trải nghiệm cảm giác mới và có lẽ là thêm hứng thú với việc lập trình này hơn?
