@@ -3,13 +3,19 @@ Game Lật ảnh viết bằng ngôn ngữ C++ và sử dụng thư viện đồ
 ***
 ## Hướng dẫn cài đặt
 **1. Tải code về máy**
-  * Vào folder bất kì dự định lưu code (ví dụ: `D:\Code`)
-  * Click chuột phải chọn `Open in Terminal`
-  * Gõ lệnh `git clone https://github.com/mairyy/Moving-Memory.git`
-
+  * Cách 1:
+    * Fork repo `https://github.com/mairyy/Moving-Memory.git` về account của bạn
+    * Vào folder bất kì dự định lưu code (ví dụ: `D:\Code`)
+    * Click chuột phải chọn `Open in Terminal`
+    * Gõ lệnh `git clone https://github.com/[ten_account_cua_ban]/Moving-Memory.git`
+  * Cách 2: 
+    * Download trực tiếp game tại `https://github.com/mairyy/Moving-Memory.git` (Chọn `Download ZIP`)
+    * Giải nén folder vừa tải
+    * Trong `File Explorer` chọn thư mục `Moving-Memory-main`
+    * Click chuột phải chọn `Open in Terminal`
 
 **2. Chạy code**
-  * Gõ lênh `cd Moving-Memory`
+  * Gõ lênh `cd Moving-Memory` (_cách 2 không cần_)
   * Sau đó gõ lệnh `.\main.exe` để chạy chương trình
 
 ***
