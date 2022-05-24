@@ -2,7 +2,14 @@
 Game Lật ảnh viết bằng ngôn ngữ C++ và sử dụng thư viện đồ họa SDL2
 ***
 ## Hướng dẫn cài đặt
-**1. Tải code về máy**
+**1. Tải MinGW-w64**
+  * Tải MinGW-w64 tại `https://sourceforge.net/projects/mingw-w64/`
+  * Giải nén file `x86_64-7.3.0-release-win32-seh-rt_v5-rev0.7z`
+  * Copy thư mục mingw64 vào nơi định lưu (Ví dụ: `D:\software`)
+  * Cài đặt đường dẫn PATH đến <ten_duong_dan_den_thu_muc_vua_luu>\mingw64\bin (Ví dụ: `D:\software\mingw64\bin`)
+
+
+**2. Tải code về máy**
   * Cách 1:
     * Fork repo `https://github.com/mairyy/Moving-Memory.git` về account của bạn
     * Vào folder bất kì dự định lưu code (ví dụ: `D:\Code`)
@@ -14,9 +21,9 @@ Game Lật ảnh viết bằng ngôn ngữ C++ và sử dụng thư viện đồ
     * Trong `File Explorer` chọn thư mục `Moving-Memory-main`
     * Click chuột phải chọn `Open in Terminal`
 
-**2. Chạy code**
+**3. Chạy code**
   * Gõ lênh `cd Moving-Memory` (_cách 2 không cần_)
-  * Sau đó gõ lệnh `.\main.exe` để chạy chương trình
+  * Sau đó gõ lệnh `mingw32-make` và `.\main.exe` để chạy chương trình
 
 ***
 ## Mô tả chung về trò chơi
